@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Biryani Adda - Admin Panel</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="login-screen">
+    <div class="login-box">
+        <div class="login-logo">
+            <h1><i class="fas fa-crown"></i> Admin Panel</h1>
+            <p>The Biryani Adda</p>
+        </div>
+        <form id="login-form">
+            <div class="input-group">
+                <label><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="username" placeholder="Enter username" required>
+            </div>
+            <div class="input-group">
+                <label><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" placeholder="Enter password" required>
+            </div>
+            <button type="submit" class="btn-gold"><i class="fas fa-sign-in-alt"></i> Login</button>
+            <p id="login-error" class="error-msg"></p>
+        </form>
+        <p class="hint-text" id="loginHint">Default: admin / admin123</p>
+    </div>
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-app" style="display:none;">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>The Biryani Adda</h3>
+            <span class="badge-admin">ADMIN</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-link active" data-section="dashboard"><i class="fas fa-chart-line"></i> Dashboard</a>
+            <a href="#" class="nav-link" data-section="menu"><i class="fas fa-utensils"></i> Menu</a>
+            <a href="#" class="nav-link" data-section="orders"><i class="fas fa-shopping-bag"></i> Orders <span class="nav-badge" id="pending-badge">0</span></a>
+            <a href="#" class="nav-link" data-section="discount"><i class="fas fa-percent"></i> Discounts</a>
+            <a href="#" class="nav-link" data-section="rewards">
+    <i class="fas fa-gift"></i> Rewards
+</a>
+            <a href="#" class="nav-link" data-section="delivery"><i class="fas fa-map-marker-alt"></i> Delivery</a>
+            <a href="#" class="nav-link" data-section="timings"><i class="fas fa-clock"></i> Timings</a>
+            <a href="#" class="nav-link" data-section="payment"><i class="fas fa-wallet"></i> Payment</a>
+            <a href="#" class="nav-link" data-section="settings"><i class="fas fa-user-shield"></i> Admin Settings</a>
+        </nav>
+        <div class="sidebar-footer">
+            <button onclick="logout()" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+            <h2 id="page-title"><i class="fas fa-chart-line"></i> Dashboard</h2>
+            <div class="top-actions">
+                <span class="live-indicator"><i class="fas fa-circle"></i> Live</span>
+                <span id="current-time"></span>
+            </div>
+        </header>
+
+        <!-- DASHBOARD -->
+        <section id="section-dashboard" class="content-section active">
+<!-- Dashboard Revenue Filters -->
+<div class="dashboard-filters">
+    
+    <select id="revenue-filter">
+        <option value="all">All Time</option>
+        <option value="today">Today</option>
+        <option value="yesterday">Yesterday</option>
+        <option value="date">Single Date</option>
+        <option value="range">Date Range</option>
+    </select>
+
+    <input type="date" id="single-date">
+
+    <div id="date-range-box" style="display:none;">
+       <input type="date" id="start-date">
+<input type="date" id="end-date">
+    </div>
+
+</div>
+
+            <div class="stats-grid">
+                <div class="stat-card gold">
+                    <div class="stat-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <div class="stat-info"><h3 id="stat-total-orders">0</h3><p>Total Orders</p></div>
+                </div>
+                <div class="stat-card red">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-info"><h3 id="stat-pending-orders">0</h3><p>Pending</p></div>
+                </div>
+                <div class="stat-card green">
+                    <div class="stat-icon"><i class="fas fa-rupee-sign"></i></div>
+                    <div class="stat-info"><h3 id="stat-revenue">₹0</h3><p>Revenue</p></div>
+                </div>
+                <div class="stat-card blue">
+                    <div class="stat-icon"><i class="fas fa-users"></i></div>
+                    <div class="stat-info"><h3 id="stat-customers">0</h3><p>Customers</p></div>
+                </div>
+            </div>
+            <div class="dashboard-row">
+                <div class="panel">
+                    <div class="panel-header"><h3><i class="fas fa-fire"></i> Recent Orders</h3></div>
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead><tr><th>Order ID</th><th>Customer</th><th>Phone</th><th>Area</th><th>Total</th><th>Discount</th><th>Status</th><th>Time</th></tr></thead>
+                            <tbody id="recent-orders-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MENU -->
+        <section id="section-menu" class="content-section">
+            <div class="panel">
+                <div class="panel-header space-between">
+                    <h3><i class="fas fa-utensils"></i> Menu Items</h3>
+                    <button class="btn-gold" onclick="openMenuModal()"><i class="fas fa-plus"></i> Add Item</button>
+                </div>
+                <div class="filter-bar">
+                    <select id="menu-filter-category" onchange="renderMenuTable()">
+                        <option value="all">All Categories</option>
+                        <option value="biryani">Signature Biryani</option>
+                        <option value="kebab">Kebabs & Starters</option>
+                        <option value="bread">Rice & Bread</option>
+                        <option value="curry">Curries & Gravies</option>
+                        <option value="drink">Drinks</option>
+                        <option value="dessert">Desserts</option>
+                        <option value="combo">Combos & Offers</option>
+                    </select>
+                    <input type="text" id="menu-search" placeholder="Search items..." onkeyup="renderMenuTable()">
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead><tr><th>Image</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr></thead>
+                        <tbody id="menu-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- ORDERS -->
+        <section id="section-orders" class="content-section">
+            <div class="panel">
+                <div class="panel-header space-between">
+                    <h3><i class="fas fa-shopping-bag"></i> All Orders</h3>
+                    <div class="filter-group">
+                        <select id="order-status-filter" onchange="renderOrdersTable()">
+                            <option value="all">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Accepted">Accepted</option>
+                            <option value="Preparing">Preparing</option>
+                            <option value="Out for Delivery">Out for Delivery</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                        <button class="btn-outline" onclick="clearAllOrders()"><i class="fas fa-trash"></i> Clear All</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table orders-table">
+                        <thead><tr><th>ID</th><th>Customer</th><th>Phone</th><th>Area</th><th>Items</th><th>Subtotal</th><th>Discount</th><th>Delivery</th><th>Status</th><th>Payment</th><th>Status</th><th>Actions</th></tr></thead>
+                        <tbody id="orders-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- DISCOUNT -->
+        <section id="section-discount" class="content-section">
+            <div class="panel">
+                <div class="panel-header"><h3><i class="fas fa-percent"></i> Repeat Customer Discount</h3></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Orders Threshold (Min orders for discount)</label>
+                        <input type="number" id="discount-threshold" min="1" value="5">
+                        <small>Customer must have these many past orders to get discount</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Discount Percentage (%)</label>
+                        <input type="number" id="discount-percent" min="0" max="100" value="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Discount Status</label>
+                        <div class="toggle-wrapper">
+                            <label class="switch"><input type="checkbox" id="discount-active" checked><span class="slider round"></span></label>
+                            <span id="discount-status-text">Active</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-gold" onclick="saveDiscountSettings()"><i class="fas fa-save"></i> Save Discount Settings</button>
+                </div>
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> How it works</h4>
+                    <p>When a customer places <strong id="info-threshold">5</strong> orders (tracked by phone number), they get <strong id="info-percent">10%</strong> off on their next order. After using the discount, their count resets to 0 and they need to place <strong id="info-threshold2">5</strong> more orders to get discount again.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- REWARDS -->
+<section id="section-rewards" class="content-section">
+
+<div class="panel">
+
+<div class="panel-header space-between">
+<h3><i class="fas fa-gift"></i> Loyalty Reward System</h3>
+
+<button class="btn-gold" onclick="addRewardLevel()">
+<i class="fas fa-plus"></i> Add Reward
+</button>
+</div>
+
+<p class="panel-desc">
+Customers unlock bigger discounts based on total spending.
+</p>
+
+<div id="reward-levels-list"></div>
+
+<div class="form-actions">
+<button class="btn-gold" onclick="saveRewardLevels()">
+<i class="fas fa-save"></i> Save Reward Settings
+</button>
+</div>
+
+</div>
+
+</section>
+
+        <!-- DELIVERY -->
+        <section id="section-delivery" class="content-section">
+            <div class="panel">
+                <div class="panel-header space-between">
+                    <h3><i class="fas fa-map-marker-alt"></i> Delivery Areas</h3>
+                    <button class="btn-gold" onclick="addDeliveryArea()"><i class="fas fa-plus"></i> Add Area</button>
+                </div>
+                <p class="panel-desc">Orders outside these areas will be blocked on the website.</p>
+                <div class="area-grid" id="delivery-areas-list"></div>
+            </div>
+        </section>
+
+        <!-- TIMINGS -->
+        <section id="section-timings" class="content-section">
+            <div class="panel">
+                <div class="panel-header"><h3><i class="fas fa-clock"></i> Order & Menu Timings</h3></div>
+                <div class="timing-cards">
+                    <div class="timing-card">
+                        <h4><i class="fas fa-shopping-cart" style="color:var(--gold)"></i> Order Time</h4>
+                        <p style="color:var(--gray);font-size:0.85rem;margin-bottom:12px;">Customers can place orders only during this time</p>
+                        <div class="form-grid two-col" style="padding:0;gap:12px;">
+                            <div class="form-group"><label>Order Start Time</label><input type="time" id="order-start-time" value="11:00"></div>
+                            <div class="form-group"><label>Order End Time</label><input type="time" id="order-end-time" value="22:00"></div>
+                        </div>
+                    </div>
+                    <div class="timing-card">
+                        <h4><i class="fas fa-utensils" style="color:var(--gold)"></i> Menu Display Time</h4>
+                        <p style="color:var(--gray);font-size:0.85rem;margin-bottom:12px;">Menu is visible to customers during this time</p>
+                        <div class="form-grid two-col" style="padding:0;gap:12px;">
+                            <div class="form-group"><label>Menu Start Time</label><input type="time" id="menu-start-time" value="10:00"></div>
+                            <div class="form-group"><label>Menu End Time</label><input type="time" id="menu-end-time" value="23:00"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-gold" onclick="saveTimings()"><i class="fas fa-save"></i> Save Timings</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- PAYMENT -->
+        <section id="section-payment" class="content-section">
+            <div class="panel">
+                <div class="panel-header"><h3><i class="fas fa-wallet"></i> Payment Settings</h3></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>UPI ID</label>
+                        <input type="text" id="upi-id" value="biryaniadda@upi" placeholder="yourupi@bank">
+                        <small>This UPI ID will be shown on checkout page for QR code</small>
+                    </div>
+                    <div class="form-group">
+                        <label>QR Code Image</label>
+                        <input type="file" id="qr-upload" accept="image/*" onchange="previewQR(this)">
+                        <small>Upload your UPI QR code image (optional)</small>
+                    </div>
+                </div>
+                <div class="qr-preview-box" id="qrPreviewBox" style="display:none;">
+                    <label>QR Preview</label>
+                    <img id="qrPreview" style="max-width:200px;border-radius:12px;border:2px solid var(--gold-dark);">
+                    <button class="btn-outline" onclick="removeQR()" style="margin-top:10px;"><i class="fas fa-trash"></i> Remove QR</button>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-gold" onclick="savePaymentSettings()"><i class="fas fa-save"></i> Save Payment Settings</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADMIN SETTINGS -->
+        <section id="section-settings" class="content-section">
+            <div class="panel">
+                <div class="panel-header"><h3><i class="fas fa-user-shield"></i> Change Admin Password</h3></div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" id="current-password" placeholder="Enter current password">
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" id="new-password" placeholder="Enter new password">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" id="confirm-password" placeholder="Confirm new password">
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-gold" onclick="changeAdminPassword()"><i class="fas fa-key"></i> Change Password</button>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><h3><i class="fas fa-database"></i> Google Sheets Integration</h3></div>
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column:1/-1;">
+                        <label>Google Sheet Webhook URL</label>
+                        <input type="url" id="sheet-url" placeholder="https://script.google.com/macros/s/.../exec" style="font-size:0.85rem;">
+                        <small>Orders will be automatically sent to this Google Sheet</small>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-gold" onclick="saveSheetUrl()"><i class="fas fa-save"></i> Save URL</button>
+                    <button class="btn-outline" onclick="testSheetConnection()"><i class="fas fa-plug"></i> Test Connection</button>
+                </div>
+                <div class="info-box">
+                    <h4><i class="fas fa-info-circle"></i> How to setup Google Sheets</h4>
+                    <p>1. Create a Google Sheet<br>2. Go to Extensions → Apps Script<br>3. Deploy as Web App<br>4. Copy the Web App URL and paste above</p>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-header"><h3><i class="fas fa-toggle-on"></i> Store Controls</h3></div>
+                <div class="control-cards">
+                    <div class="control-card">
+                        <div class="control-info"><h4>Accept New Orders</h4><p>Turn off to stop receiving orders immediately</p></div>
+                        <label class="switch large"><input type="checkbox" id="accept-orders-toggle" checked><span class="slider round"></span></label>
+                    </div>
+                    <div class="control-card">
+                        <div class="control-info"><h4>Maintenance Mode</h4><p>Show maintenance message to all customers</p></div>
+                        <label class="switch large"><input type="checkbox" id="maintenance-toggle"><span class="slider round"></span></label>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="btn-gold" onclick="saveStoreControls()"><i class="fas fa-save"></i> Save Controls</button>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<!-- Menu Modal -->
+<div id="menu-modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-title"><i class="fas fa-plus"></i> Add Menu Item</h3>
+            <button class="close-btn" onclick="closeMenuModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <form id="menu-form" onsubmit="saveMenuItem(event)">
+            <input type="hidden" id="menu-item-id">
+            <div class="form-grid two-col">
+                <div class="form-group"><label>Name *</label><input type="text" id="item-name" required placeholder="e.g. Chicken Biryani"></div>
+                <div class="form-group">
+                    <label>Category *</label>
+                    <select id="item-category" required>
+                        <option value="biryani">Signature Biryani</option>
+                        <option value="kebab">Kebabs & Starters</option>
+                        <option value="bread">Rice & Bread</option>
+                        <option value="curry">Curries & Gravies</option>
+                        <option value="drink">Drinks</option>
+                        <option value="dessert">Desserts</option>
+                        <option value="combo">Combos & Offers</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>Price (₹) *</label><input type="number" id="item-price" required min="1"></div>
+                <div class="form-group"><label>Old Price (₹)</label><input type="number" id="item-old-price" min="0" placeholder="For strike-through"></div>
+                <div class="form-group" style="grid-column:1/-1;"><label>Image URL</label><input type="url" id="item-image" placeholder="https://..."></div>
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label>Tags (comma separated)</label>
+                    <input type="text" id="item-tags" placeholder="🌶️ Spicy, ⚡ 30 min, 👥 Serves 2">
+                </div>
+            </div>
+            <div class="form-group"><label>Description</label><textarea id="item-description" rows="2"></textarea></div>
+            <div class="form-group">
+                <label class="checkbox-label"><input type="checkbox" id="item-in-stock" checked><span>In Stock</span></label>
+                <label class="checkbox-label" style="margin-left:20px;"><input type="checkbox" id="item-bestseller"><span>Mark as Bestseller</span></label>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-outline" onclick="closeMenuModal()">Cancel</button>
+                <button type="submit" class="btn-gold"><i class="fas fa-save"></i> Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Order Modal -->
+<div id="order-modal" class="modal">
+    <div class="modal-content large">
+        <div class="modal-header">
+            <h3><i class="fas fa-receipt"></i> Order Details</h3>
+            <button class="close-btn" onclick="closeOrderModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div id="order-detail-content"></div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="admin.js"></script>
+
+<div id="toast" class="toast"></div>
+</body>
+</html>
