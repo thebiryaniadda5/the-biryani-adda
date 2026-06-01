@@ -423,5 +423,30 @@ Customers unlock bigger discounts based on total spending.
 <script src="admin.js"></script>
 
 <div id="toast" class="toast"></div>
+<script type="module">
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import { getFirestore }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyALmM5z9DYSxRkpros004SMl27pQsDJwgM",
+  authDomain: "biryani-project-23269.firebaseapp.com",
+  projectId: "biryani-project-23269",
+  storageBucket: "biryani-project-23269.firebasestorage.app",
+  messagingSenderId: "378390409396",
+  appId: "1:378390409396:web:d2001262af629765a5a7e1",
+  measurementId: "G-EBZZ8TRDZX"
+};
+
+const app = initializeApp(firebaseConfig);
+
+window.db = getFirestore(app);
+
+console.log("Admin Firebase Connected");
+
+</script>
 </body>
 </html>
