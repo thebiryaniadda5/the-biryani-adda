@@ -556,8 +556,10 @@ function closeOrderModal() {
 }
 
 async function updateOrderStatus(orderId, newStatus) {
-
-    await window.updateDoc(
+const settings = JSON.parse(
+    localStorage.getItem(KEYS.SETTINGS) || '{}'
+);
+await window.updateDoc(
     window.doc(
         window.db,
         "orders",
@@ -567,35 +569,10 @@ async function updateOrderStatus(orderId, newStatus) {
         status: newStatus
     }
 );
-
 console.log(
     "Status Updated In Firebase"
 );
-    window.updateDoc(
-    window.doc(
-        window.db,
-        "orders",
-        orderId
-    ),
-    {
-        status: newStatus
-    }
-)
-.then(() => {
 
-    console.log(
-        "Status Updated In Firebase"
-    );
-
-})
-.catch((err) => {
-
-    console.error(
-        "Firebase Status Error",
-        err
-    );
-
-});
 
     // Google Sheet Status Update
     if(settings.googleSheetUrl){
