@@ -466,6 +466,9 @@ snapshot.forEach((docSnap) => {
     orders.push(order);
 
 });
+orders.sort((a, b) =>
+    new Date(b.time) - new Date(a.time)
+);
     const filterStatus = document.getElementById('order-status-filter').value;
 
     const filtered = filterStatus === 'all'
