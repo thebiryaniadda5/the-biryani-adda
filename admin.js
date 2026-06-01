@@ -440,8 +440,16 @@ function deleteMenuItem(id) {
 }
 
 // ================= ORDERS =================
-function renderOrdersTable() {
-    const orders = JSON.parse(localStorage.getItem(KEYS.ORDERS) || '[]');
+async function renderOrdersTable() {
+    const snapshot = await window.getDocs(
+    window.collection(window.db, "orders")
+);
+
+const orders = [];
+
+snapshot.forEach((doc) => {
+    orders.push(doc.data());
+});
     const filterStatus = document.getElementById('order-status-filter').value;
 
     const filtered = filterStatus === 'all'
