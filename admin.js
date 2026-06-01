@@ -447,8 +447,14 @@ async function renderOrdersTable() {
 
 const orders = [];
 
-snapshot.forEach((doc) => {
-    orders.push(doc.data());
+snapshot.forEach((docSnap) => {
+
+    const order = docSnap.data();
+
+    order.firebaseId = docSnap.id;
+
+    orders.push(order);
+
 });
     const filterStatus = document.getElementById('order-status-filter').value;
 
@@ -472,7 +478,7 @@ snapshot.forEach((doc) => {
             <td>${order.discount > 0 ? '<span style="color:var(--green)">-₹' + order.discount + ' (' + order.discountPercent + '%)</span>' : '-'}</td>
             <td>${order.payment}</td>
             <td>
-                <select onchange="updateOrderStatus('${order.id}', this.value)" style="background:var(--black-lighter);color:var(--white);border:1px solid var(--gray-dark);padding:4px 8px;border-radius:4px;font-size:0.85rem;">
+                <select onchange="updateOrderStatus('${order.firebaseId}', this.value)" style="background:var(--black-lighter);color:var(--white);border:1px solid var(--gray-dark);padding:4px 8px;border-radius:4px;font-size:0.85rem;">
                     <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
                     <option value="Accepted" ${order.status === 'Accepted' ? 'selected' : ''}>Accepted</option>
                     <option value="Preparing" ${order.status === 'Preparing' ? 'selected' : ''}>Preparing</option>
@@ -485,8 +491,8 @@ snapshot.forEach((doc) => {
                 ${order.lat ? `<a href="https://www.google.com/maps?q=${order.lat},${order.lng}" target="_blank" style="color:var(--gold);"><i class="fas fa-map-marker-alt"></i></a>` : '-'}
             </td>
             <td>
-                <button class="btn-sm btn-view" onclick="viewOrder('${order.id}')" title="View"><i class="fas fa-eye"></i></button>
-                <button class="btn-sm btn-delete" onclick="deleteOrder('${order.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+                <button class="btn-sm btn-view" onclick="viewOrder('${order.firebaseId}')" title="View"><i class="fas fa-eye"></i></button>
+                <button class="btn-sm btn-delete" onclick="deleteOrder('${order.firebaseId}')" title="Delete"><i class="fas fa-trash"></i></button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -571,6 +577,31 @@ function updateOrderStatus(orderId, newStatus) {
         KEYS.ORDERS,
         JSON.stringify(orders)
     );
+    window.updateDoc(
+    window.doc(
+        window.db,
+        "orders",
+        orderId
+    ),
+    {
+        status: newStatus
+    }
+)
+.then(() => {
+
+    console.log(
+        "Status Updated In Firebase"
+    );
+
+})
+.catch((err) => {
+
+    console.error(
+        "Firebase Status Error",
+        err
+    );
+
+});
 
     // Google Sheet Status Update
     if(settings.googleSheetUrl){
