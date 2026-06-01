@@ -499,7 +499,6 @@ snapshot.forEach((docSnap) => {
     });
 }
 
-
 async function viewOrder(orderId) {
 
     const docRef = window.doc(
