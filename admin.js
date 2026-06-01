@@ -174,11 +174,21 @@ function toggleSidebar() {
 // ================= DASHBOARD =================
 // ================= DASHBOARD =================
 
-function updateDashboard() {
+async function updateDashboard() {
 
     const today = new Date();
 
-    const orders = JSON.parse(localStorage.getItem(KEYS.ORDERS) || '[]');
+    const snapshot = await window.getDocs(
+    window.collection(window.db, "orders")
+);
+
+const orders = [];
+
+snapshot.forEach((docSnap) => {
+
+    orders.push(docSnap.data());
+
+});
 
     const filter = document.getElementById('revenue-filter')?.value || 'today';
 
@@ -516,7 +526,6 @@ async function viewOrder(orderId) {
     const content =
         document.getElementById('order-detail-content');
 
-    const content = document.getElementById('order-detail-content');
     const itemsHtml = order.items.map(item => `
         <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--gray-dark);">
             <span>${item.name} <small style="color:var(--gray)">x${item.qty}</small></span>
@@ -548,7 +557,7 @@ async function viewOrder(orderId) {
         </div>
         <div style="padding:0 20px 20px;">
             <label style="color:var(--gold);margin-bottom:10px;display:block;">Update Status</label>
-            <select onchange="updateOrderStatus('${order.id}', this.value); closeOrderModal();" style="padding:10px;background:var(--black-lighter);border:1px solid var(--gray-dark);color:var(--white);border-radius:6px;width:100%;">
+            <select onchange="updateOrderStatus('${orderId}', this.value); closeOrderModal();" style="padding:10px;background:var(--black-lighter);border:1px solid var(--gray-dark);color:var(--white);border-radius:6px;width:100%;">
                 <option value="Pending" ${order.status === 'Pending' ? 'selected' : ''}>Pending</option>
                 <option value="Accepted" ${order.status === 'Accepted' ? 'selected' : ''}>Accepted</option>
                 <option value="Preparing" ${order.status === 'Preparing' ? 'selected' : ''}>Preparing</option>
@@ -615,14 +624,23 @@ console.log(
     );
 }
 
-function deleteOrder(orderId) {
+async function deleteOrder(orderId) {
+
     if (!confirm('Delete this order permanently?')) return;
-    let orders = JSON.parse(localStorage.getItem(KEYS.ORDERS) || '[]');
-    orders = orders.filter(o => o.id !== orderId);
-    localStorage.setItem(KEYS.ORDERS, JSON.stringify(orders));
+
+    await window.deleteDoc(
+        window.doc(
+            window.db,
+            "orders",
+            orderId
+        )
+    );
+
     renderOrdersTable();
+
     updateDashboard();
-    showToast('Order deleted');
+
+    showToast("Order Deleted From Firebase");
 }
 
 function clearAllOrders() {
