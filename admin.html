@@ -428,7 +428,15 @@ Customers unlock bigger discounts based on total spending.
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-import { getFirestore }
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    onSnapshot,
+    updateDoc,
+    doc
+}
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -444,6 +452,13 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 window.db = getFirestore(app);
+
+window.collection = collection;
+window.addDoc = addDoc;
+window.getDocs = getDocs;
+window.onSnapshot = onSnapshot;
+window.updateDoc = updateDoc;
+window.doc = doc;
 
 console.log("Admin Firebase Connected");
 
