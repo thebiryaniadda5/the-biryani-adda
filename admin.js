@@ -500,10 +500,22 @@ snapshot.forEach((docSnap) => {
 }
 
 
-function viewOrder(orderId) {
-    const orders = JSON.parse(localStorage.getItem(KEYS.ORDERS) || '[]');
-    const order = orders.find(o => o.id === orderId);
-    if (!order) return;
+async function viewOrder(orderId) {
+
+    const docRef = window.doc(
+        window.db,
+        "orders",
+        orderId
+    );
+
+    const docSnap = await window.getDoc(docRef);
+
+    if (!docSnap.exists()) return;
+
+    const order = docSnap.data();
+
+    const content =
+        document.getElementById('order-detail-content');
 
     const content = document.getElementById('order-detail-content');
     const itemsHtml = order.items.map(item => `
