@@ -436,9 +436,11 @@ import {
     getDoc,
     onSnapshot,
     updateDoc,
+    deleteDoc,
     doc
 }
 from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyALmM5z9DYSxRkpros004SMl27pQsDJwgM",
@@ -460,6 +462,7 @@ window.getDocs = getDocs;
 window.getDoc = getDoc;
 window.onSnapshot = onSnapshot;
 window.updateDoc = updateDoc;
+window.deleteDoc = deleteDoc;
 window.doc = doc;
 
 console.log("Admin Firebase Connected");
