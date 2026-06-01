@@ -1,3 +1,8 @@
+import {
+  collection,
+  addDoc
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
 // ================= STORAGE KEYS =================
 const KEYS = {
     MENU: 'biryani_adda_menu',
@@ -648,6 +653,28 @@ function placeOrder() {
     const orders = JSON.parse(localStorage.getItem(KEYS.ORDERS));
     orders.unshift(order);
     localStorage.setItem(KEYS.ORDERS, JSON.stringify(orders));
+
+    // Save Order To Firebase
+
+addDoc(
+    collection(window.db, "orders"),
+    order
+)
+.then(() => {
+
+    console.log(
+        "Order Saved To Firebase"
+    );
+
+})
+.catch((err) => {
+
+    console.error(
+        "Firebase Error",
+        err
+    );
+
+});
 
     // Update customer history
     if (!customers[phone]) customers[phone] = { orders: 0, name: fname + ' ' + lname };
