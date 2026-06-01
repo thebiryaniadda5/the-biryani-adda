@@ -458,82 +458,30 @@ Jahan Taste Bhi Royal Hai Aur Quantity Bhi Powerful 😋"
     </div>
 
 </footer>
+<script type="module">
 
-<!-- ===== RESTAURANT FOOTER ===== -->
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-<section class="restaurant-info">
+import { getFirestore }
+from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
 
-    <div class="info-container">
+const firebaseConfig = {
+  apiKey: "AIzaSyALmM5z9DYSxRkpros004SMl27pQsDJwgM",
+  authDomain: "biryani-project-23269.firebaseapp.com",
+  projectId: "biryani-project-23269",
+  storageBucket: "biryani-project-23269.firebasestorage.app",
+  messagingSenderId: "378390409396",
+  appId: "1:378390409396:web:d2001262af629765a5a7e1",
+  measurementId: "G-EBZZ8TRDZX"
+};
 
-        <div class="info-box">
-            <h3>🍗 The Biryani Adda</h3>
+const app = initializeApp(firebaseConfig);
 
-            <p>
-                Premium Hyderabadi Biryani,
-                Kebabs, Curries & Desserts
-                delivered fresh every day.
-            </p>
-        </div>
+window.db = getFirestore(app);
 
-        <div class="info-box">
-            <h3>📍 Address</h3>
+console.log("Firebase Connected");
 
-            <p>
-                College Road,<br>
-                Dhanbad,<br>
-                Jharkhand 826001
-            </p>
-        </div>
-
-        <div class="info-box">
-            <h3>📞 Contact</h3>
-
-            <p>+91 9876543210</p>
-            <p>WhatsApp Available</p>
-        </div>
-
-        <div class="info-box">
-            <h3>⏰ Timing</h3>
-
-            <p>11:00 AM - 11:00 PM</p>
-            <p>Open All Days</p>
-        </div>
-
-    </div>
-
-    <div class="review-section">
-
-        <h2>⭐ Customer Reviews</h2>
-
-        <div class="review-cards">
-
-            <div class="review-card">
-                <h4>Rahul Kumar</h4>
-                <p>⭐⭐⭐⭐⭐</p>
-                <p>Best Biryani in Dhanbad.</p>
-            </div>
-
-            <div class="review-card">
-                <h4>Priya Sharma</h4>
-                <p>⭐⭐⭐⭐⭐</p>
-                <p>Very tasty and fast delivery.</p>
-            </div>
-
-            <div class="review-card">
-                <h4>Amit Singh</h4>
-                <p>⭐⭐⭐⭐⭐</p>
-                <p>Family loved the combo pack.</p>
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="footer-bottom">
-        © 2026 The Biryani Adda | All Rights Reserved
-    </div>
-
-</section>
-
+</script>
 </body>
 </html>
