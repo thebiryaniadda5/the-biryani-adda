@@ -555,28 +555,22 @@ function closeOrderModal() {
     document.getElementById('order-modal').classList.remove('active');
 }
 
-function updateOrderStatus(orderId, newStatus) {
+async function updateOrderStatus(orderId, newStatus) {
 
-    let orders = JSON.parse(
-        localStorage.getItem(KEYS.ORDERS) || '[]'
-    );
+    await window.updateDoc(
+    window.doc(
+        window.db,
+        "orders",
+        orderId
+    ),
+    {
+        status: newStatus
+    }
+);
 
-    const settings = JSON.parse(
-        localStorage.getItem(KEYS.SETTINGS) || '{}'
-    );
-
-    const index = orders.findIndex(
-        o => o.id == orderId
-    );
-
-    if(index === -1) return;
-
-    orders[index].status = newStatus;
-
-    localStorage.setItem(
-        KEYS.ORDERS,
-        JSON.stringify(orders)
-    );
+console.log(
+    "Status Updated In Firebase"
+);
     window.updateDoc(
     window.doc(
         window.db,
@@ -615,10 +609,10 @@ function updateOrderStatus(orderId, newStatus) {
             },
 
             body: JSON.stringify({
-                action: 'status_update',
-                orderId: orders[index].id,
-                status: newStatus
-            })
+    action: 'status_update',
+    orderId: orderId,
+    status: newStatus
+})
 
         }).catch(err => console.error(err));
 
