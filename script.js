@@ -1,8 +1,3 @@
-import {
-  collection,
-  addDoc
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
 // ================= STORAGE KEYS =================
 const KEYS = {
     MENU: 'biryani_adda_menu',
@@ -656,9 +651,9 @@ function placeOrder() {
 
     // Save Order To Firebase
 
-addDoc(
-    collection(window.db, "orders"),
-    order
+window.addDoc(
+  window.collection(window.db, "orders"),
+  order
 )
 .then(() => {
 
